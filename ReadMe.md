@@ -1,8 +1,7 @@
-## CRUD PHP com Containers de Docker
+## TEMA - CRUD (PHP):
+# Lista de Produtos
 
-Tema: Lista de Produtos
+# Descrição:
 
-Nome do Produto
-Marca
-Quantidade
-Preço
+# Banco de Dados:
+

@@ -1,24 +1,29 @@
 services:
-  php:
+  app:
     build: .
     image: php:8.3-apache
     container_name: php
     ports:
       - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_USER: superUsuario
+      DB_PASSWORD: simplicidade1
+      DB_NAME: crudFernando
     volumes:
       - ./src:/var/www/html
     depends_on:
-      - mysql
+      - db
     
-  mysql:
+  db:
     image: mysql:8.4
     container_name: mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_DATABASE: crudFernando
-      MYSQL_USER: elienay
-      MYSQL_PASSWORD: elienay123
+      MYSQL_USER: superUsuario
+      MYSQL_PASSWORD: simplicidade1
     ports:
       - "3306:3306"
     volumes:
@@ -32,10 +37,10 @@ services:
     ports:
       - "8081:80"
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: db
       PMA_PORT: 3306
     depends_on:
-      - mysql
+      - db
   
 volumes:
   mysql_data:
