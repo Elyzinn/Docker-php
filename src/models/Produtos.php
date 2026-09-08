@@ -22,7 +22,7 @@ class Produtos{
     public function listProduto(){
         $sql = "SELECT id, nome, marca, quantidade, valor_unitario FROM produtos";
         $stmt = $this->db->query($sql);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function updateProduto($id, $nome, $marca, $quantidade, $valor_unitario){

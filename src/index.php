@@ -54,6 +54,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             </div>
 
             <button type="submit" class="btn btn-primary">Enviar</button>
+            <button onclick="window.location.href='lista.php'" type="button" class="btn btn-secondary">Lista de Produtos</button>
         </form>
     </div>
 </body>
