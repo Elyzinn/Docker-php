@@ -8,14 +8,14 @@ class Produtos{
     $this->db = (new Database())-> connect();
     }
 
-    public function addProduto($nome, $marca, $quantidade, $valor_unitario){
+    public function addProduto($nome, $marca, $quantidade, $valorUnitario){
         $sql = "INSERT INTO produtos (nome, marca, quantidade, valor_unitario) VALUES (:nome,:marca,:quantidade,:valor_unitario)";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
             'nome' => $nome,
             'marca' => $marca,
             'quantidade' => $quantidade,
-            'valor_unitario' => $valor_unitario
+            'valor_unitario' => $valorUnitario
         ]);
     }
 
