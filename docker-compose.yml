@@ -1,37 +1,41 @@
 services:
   app:
-    build: .
-    image: php:8.3-apache
-    container_name: php
-    ports:
-      - "8080:80"
-    environment:
+    build: .  # Diz ao Docker buildar a imagem com as costumizações feitas no Dockerfile, localizado na Raiz do projeto
+    image: php:8.3-apache  # Imagem do php escolhida
+    container_name: php  # Nome dado para o Container
+    ports: # Definindo em qual porta este serviço vai rodar
+      - "8080:80" # A sintaxe é porta_local : porta_container, a porta 8080 é acessada pelo Navegador
+      # e a porta 80 é a do servidor Web(HTTP) rodando dentro do container.
+
+    environment:  # Define as variaveis de Ambiente para poder fazer a conexão com o Container do MySQL
       DB_HOST: db
       DB_USER: superUsuario
       DB_PASSWORD: simplicidade1
       DB_NAME: crudFernando
-    volumes:
-      - ./src:/var/www/html
-    depends_on:
+
+    volumes: # Volumes serve para espelhar arquivos locais para dentro do Container
+      - ./src:/var/www/html # Neste caso está dizendo para montar toda a pasta '/src' dentro de '/var/www/html'
+
+    depends_on: # Define que este serviço depende do serviço 'db'
       - db
-    networks:
+    networks: # Rede local onde este serviço está rodando
       - bridge_communication
     
   db:
     image: mysql:8.4
     container_name: mysql
-    restart: unless-stopped
-    environment:
+    restart: unless-stopped  # Define que o serviço vai ser restartado automaticamente caso aconteça algum erro de montagem.
+    environment:  # Define as variaveis de Ambiente para acessar o Banco
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_DATABASE: crudFernando
       MYSQL_USER: superUsuario
       MYSQL_PASSWORD: simplicidade1
     ports:
       - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
-    networks:
+    volumes:  # Caminho de Pastas onde vai rodar o Banco 
+      - mysql_data:/var/lib/mysql  # Isto funciona para armazenar os dados permanentemente
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql #
+    networks: # Rede local onde este serviço está rodando
       - bridge_communication
 
   phpmyadmin:
@@ -40,18 +44,18 @@ services:
     restart: unless-stopped
     ports:
       - "8081:80"
-    environment:
-      PMA_HOST: db
+    environment: # Define as variaveis de Ambiente para poder fazer a conexão com o Container do MySQL
+      PMA_HOST: db # Define que o phpMyAdmin deve se conectar ao container cujo serviço se chama 'db'
       PMA_PORT: 3306
     depends_on:
       - db
     networks:
       - bridge_communication
   
-volumes:
+volumes: # Declaração do Volume gerenciado pelo serviço db(MySQL) do Docker permitindo o armazenamento de dados, mesmo após o ciclo de vida dos containers.
   mysql_data:
 
-networks:
-  bridge_communication:
-    driver: bridge
+networks: # Declaração da rede personalizada com o intuito de isolar e fazer a conexão dos serviços dentro dela.
+  bridge_communication: # Nome da Rede criada
+    driver: bridge # Cria uma rede virtual privada para que os containers se comuniquem via nome atribuido com segurança
       
