@@ -3,7 +3,49 @@ require_once 'models/Database.php';
 require_once 'models/Produtos.php';
 
 $produtos = new Produtos();
+$mensagem = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $acao = $_POST['acao'] ?? '';
+    $id = (int) ($_POST['id'] ?? 0);
+
+    if ($id > 0 && $acao === 'excluir') {
+        $produtos->deleteProduto($id);
+        header('Location: lista.php');
+        exit;
+    }
+
+    if ($id > 0 && $acao === 'atualizar') {
+        $valorUnitario = (float) ($_POST['valor_unitario'] ?? 0);
+
+        if ($valorUnitario <= 0) {
+            $mensagem = 'O valor unitário deve ser maior que zero.';
+        } else {
+            $produtos->updateProduto(
+                $id,
+                $_POST['nome'] ?? '',
+                $_POST['marca'] ?? '',
+                (int) ($_POST['quantidade'] ?? 0),
+                $valorUnitario
+            );
+            header('Location: lista.php');
+            exit;
+        }
+    }
+}
+
 $listaProdutos = $produtos->listProduto();
+$produtoEmEdicao = null;
+
+if (isset($_GET['editar'])) {
+    $idEmEdicao = (int) $_GET['editar'];
+    foreach ($listaProdutos as $produto) {
+        if ((int) $produto['id'] === $idEmEdicao) {
+            $produtoEmEdicao = $produto;
+            break;
+        }
+    }
+}
 
 
 ?>
@@ -31,24 +73,48 @@ $listaProdutos = $produtos->listProduto();
                         <th>Marca</th>
                         <th>Quantidade</th>
                         <th>Valor Unitário</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($listaProdutos as $produto): ?>
                         <tr>
-                            <td><?= $produto['id'] ?></td>
-                            <td><?= $produto['nome'] ?></td>
-                            <td><?= $produto['marca'] ?></td>
-                            <td><?= $produto['quantidade'] ?></td>
-                            <td><?= $produto['valor_unitario'] ?></td>
+                            <?php if ($produtoEmEdicao && $produtoEmEdicao['id'] == $produto['id']): ?>
+                                <form method="POST">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <input type="hidden" name="id" value="<?= (int) $produto['id'] ?>">
+                                    <td><?= (int) $produto['id'] ?></td>
+                                    <td><input class="form-control" name="nome" value="<?= htmlspecialchars($produto['nome']) ?>" required></td>
+                                    <td><input class="form-control" name="marca" value="<?= htmlspecialchars($produto['marca']) ?>" required></td>
+                                    <td><input class="form-control" type="number" name="quantidade" value="<?= (int) $produto['quantidade'] ?>" required></td>
+                                    <td><input class="form-control" type="number" min="0.01" step="0.01" name="valor_unitario" value="<?= htmlspecialchars($produto['valor_unitario']) ?>" required></td>
+                                    <td>
+                                        <button type="submit" class="btn btn-success">Salvar</button>
+                                        <a href="lista.php" class="btn btn-secondary">Cancelar</a>
+                                    </td>
+                                </form>
+                            <?php else: ?>
+                            <td><?= (int) $produto['id'] ?></td>
+                            <td><?= htmlspecialchars($produto['nome']) ?></td>
+                            <td><?= htmlspecialchars($produto['marca']) ?></td>
+                            <td><?= (int) $produto['quantidade'] ?></td>
+                            <td><?= htmlspecialchars($produto['valor_unitario']) ?></td>
+                            <td>
+                                <a href="lista.php?editar=<?= (int) $produto['id'] ?>" class="btn btn-warning">Editar</a>
+                                <form method="POST" style="display: inline;" onsubmit="return confirm('Deseja excluir este produto?');">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <input type="hidden" name="id" value="<?= (int) $produto['id'] ?>">
+                                    <button type="submit" class="btn btn-danger">Excluir</button>
+                                </form>
+                            </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>
         <button onclick="window.location.href='index.php'" type="button" class="btn btn-secondary">Voltar</button>
-        <button type="submit" class="btn btn-primary" style="background-color: orange;">Atualizar Produto</button>
-        <button type="submit" class="btn btn-primary" style="background-color: red;">Deletar Produto</button>
+
     </div>
 </body>
 </html>

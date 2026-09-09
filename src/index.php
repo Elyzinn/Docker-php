@@ -10,9 +10,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $quantidade = (int) ($_POST['quantidade'] ?? 0);
     $valorUnitario = (float) ($_POST['valor_unitario'] ?? 0);
 
-    $produto = new Produtos();
-    $produto->addProduto($nome, $marca, $quantidade, $valorUnitario);
-    $mensagem = 'Produto adicionado com sucesso';
+    if ($valorUnitario <= 0) {
+        $mensagem = 'O valor unitário deve ser maior que zero.';
+    } else {
+        $produto = new Produtos();
+        $produto->addProduto($nome, $marca, $quantidade, $valorUnitario);
+        $mensagem = 'Produto adicionado com sucesso';
+    }
 }
 ?>
 
@@ -45,12 +49,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             <div class="mb-3">
                 <label for="quantidade" class="form-label">Quantidade:</label>
-                <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+                <input type="number" class="form-control" id="quantidade" name="quantidade" min="1" required>
             </div>
 
             <div class="mb-3">
                 <label for="valor_unitario" class="form-label">Valor Unitário:</label>
-                <input type="number" class="form-control" id="valor_unitario" name="valor_unitario" step="0.01" required>
+                <input type="number" class="form-control" id="valor_unitario" name="valor_unitario" min="0.01" step="0.01" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Enviar</button>
