@@ -25,14 +25,15 @@ class Produtos{
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function updateProduto($id, $nome, $marca, $quantidade, $valor_unitario){
+    public function updateProduto($id, $nome, $marca, $quantidade, $valorUnitario){
         $sql = "UPDATE produtos SET nome = :nome, marca = :marca, quantidade = :quantidade, valor_unitario = :valor_unitario WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
             'nome' => $nome,
             'marca' => $marca,
             'quantidade' => $quantidade,
-            'valor_unitario' => $valor_unitario
+            'valor_unitario' => $valorUnitario,
+            'id' => $id
         ]);
     }
 

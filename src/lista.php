@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_POST['nome'] ?? '',
                 $_POST['marca'] ?? '',
                 (int) ($_POST['quantidade'] ?? 0),
-                $valorUnitario
+                $valorUnitario 
             );
             header('Location: lista.php');
             exit;
