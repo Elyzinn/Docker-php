@@ -1,7 +1,8 @@
 services:
   app:
-    build: .  # Diz ao Docker buildar a imagem com as costumizações feitas no Dockerfile, localizado na Raiz do projeto
-    image: php:8.3-apache  # Imagem do php escolhida
+    build:  # Diz ao Docker buildar a imagem com as costumizações feitas no Dockerfile, localizado na Raiz do projeto
+      context: .
+      dockerfile: Dockerfile
     container_name: php  # Nome dado para o Container
     ports: # Definindo em qual porta este serviço vai rodar
       - "8080:80" # A sintaxe é porta_local : porta_container, a porta 8080 é acessada pelo Navegador
@@ -30,11 +31,15 @@ services:
       MYSQL_DATABASE: crudFernando
       MYSQL_USER: superUsuario
       MYSQL_PASSWORD: simplicidade1
+
     ports:
       - "3306:3306"
+
     volumes:  # Caminho de Pastas onde vai rodar o Banco 
       - mysql_data:/var/lib/mysql  # Isto funciona para armazenar os dados permanentemente
-      - ./db.sql:/docker-entrypoint-initdb.d/db.sql #
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql # Está linha serve para verificar se o banco inicializado tem a Tabela 'produtos'
+      # se não tiver ele espelha e executa os comandos do 'db.sql' que está na minha pasta Raiz.
+
     networks: # Rede local onde este serviço está rodando
       - bridge_communication
 
