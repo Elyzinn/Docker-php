@@ -1,7 +1,7 @@
 services:
   app:
     build:  # Diz ao Docker buildar a imagem com as costumizações feitas no Dockerfile, localizado na Raiz do projeto
-      context: .
+      context: . # Diz aonde vai estar o arquivo Dockerfile 
       dockerfile: Dockerfile
     container_name: php  # Nome dado para o Container
     ports: # Definindo em qual porta este serviço vai rodar
@@ -9,10 +9,10 @@ services:
       # e a porta 80 é a do servidor Web(HTTP) rodando dentro do container.
 
     environment:  # Define as variaveis de Ambiente para poder fazer a conexão com o Container do MySQL
-      DB_HOST: db
-      DB_USER: superUsuario
-      DB_PASSWORD: simplicidade1
-      DB_NAME: crudFernando
+      DB_HOST: db # Nome do serviço de Banco de Dados
+      DB_USER: superUsuario # Nome de usuário para acessar o Banco
+      DB_PASSWORD: simplicidade1 # Senha pré-definida para acessar o Banco
+      DB_NAME: crudFernando # Nome do Banco
 
     volumes: # Volumes serve para espelhar arquivos locais para dentro do Container
       - ./src:/var/www/html # Neste caso está dizendo para montar toda a pasta '/src' dentro de '/var/www/html'
@@ -20,14 +20,14 @@ services:
     depends_on: # Define que este serviço depende do serviço 'db'
       - db
     networks: # Rede local onde este serviço está rodando
-      - bridge_communication
+      - bridge_communication # Nome da Rede privada onde estão rodando os serviços
     
   db:
-    image: mysql:8.4
+    image: mysql:8.4 # Imagem do MySQL direto do DockerHub
     container_name: mysql
     restart: unless-stopped  # Define que o serviço vai ser restartado automaticamente caso aconteça algum erro de montagem.
     environment:  # Define as variaveis de Ambiente para acessar o Banco
-      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin # Senha para o usuário 'root'
       MYSQL_DATABASE: crudFernando
       MYSQL_USER: superUsuario
       MYSQL_PASSWORD: simplicidade1
@@ -51,7 +51,7 @@ services:
       - "8081:80"
     environment: # Define as variaveis de Ambiente para poder fazer a conexão com o Container do MySQL
       PMA_HOST: db # Define que o phpMyAdmin deve se conectar ao container cujo serviço se chama 'db'
-      PMA_PORT: 3306
+      PMA_PORT: 3306 # Porta para se comunicar com o serviço 'db'(MySQL)
     depends_on:
       - db
     networks:
